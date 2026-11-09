@@ -1,16 +1,18 @@
-/* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright (c) 2026 Shoh Tagawa */
 /* @theme tsutawaru-simple */
 /* ============================================================================
    tsutawaru-simple — ヘッダー帯のない、白地＋斜線の帯だけのテーマ
 
-   academic.css を @import して、外枠（ヘッダー・帯・余白・色・字間）だけを
-   組み直した派生テーマ。部品（§13）と配置クラス lay-*（§14）は academic の
-   ものをそのまま使う。文字・配色・囲みの考え方は academic と同じで、
-   見た目の違いは「ヘッダー帯の代わりに細い斜線の帯を置き、余白を広くとる」ことだけ。
+   tsutawaru-academic.css を @import して、外枠（ヘッダー・帯・余白・色・字間）だけを
+   組み直す。部品（§13）と配置クラス lay-*（§14）は tsutawaru-academic のものをそのまま使う。
 
-   ビルド時は2枚とも渡す（npm run png / npm run pdf は theme/*.css を全部渡すので指定不要）：
-     --theme-set theme/academic.css theme/tsutawaru-simple.css
+   ビルド時は3枚とも渡す（npm run png / npm run pdf は theme/*.css を全部渡すので指定不要）：
+     --theme-set theme/academic.css theme/tsutawaru-academic.css theme/tsutawaru-simple.css
+
+   見た目の手本：高橋佑磨「伝わるプレゼン資料のデザイン」配付資料
+     ・読み手のストレスを減らす 文字の使い方（2026.5.21／haifu261.pdf）
+     ・読み手のストレスを減らす レイアウトと配色（2026.7.16／15min0716.pdf）
+   コメントの「実測」は、この2つの PDF を 200dpi で画像にして測った値を、
+   スライドの高さ 720px に換算したもの（元のスライドは 16:10）。
 
    frontmatter は次だけでよい（header: と、ヘッダー幅の調整つまみは要らない）：
      ---
@@ -31,20 +33,17 @@
    _class にも色の語を書く（例：<!-- _class: red lay-cards3 -->）。
    デック全体の色を1つに決めるなら、class: ではなく style: の :root で
    --band / --accent / --accent-dark / --accent-soft を上書きするほうが確実。
-
-   書体：既定は academic と同じ BIZ UDPGothic。LINE Seed JP（SIL OFL 1.1）を選べるように、
-   Google Fonts から読み込む（フォントのファイルは同梱しない。描画のときに fonts.googleapis.com
-   と fonts.gstatic.com に接続する）。
    ============================================================================ */
-@import "academic";
+@import "tsutawaru-academic";
 @import url('https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&display=swap');
 
 /* ============================================================================
    1. 色 — 白地・灰色の文字・帯の色・箇条書きの点
-      文字は真っ黒にせず濃い灰（題 #424242／本文 #333333）。箇条書きの点はオレンジ、
-      下線マーカーは黄、表紙の地は薄い灰緑。
-      帯は細い斜線なので、鮮やかな色でも薄く見える。そこで帯（--band）には鮮やかな値を、
-      面や文字に使う --accent には彩度を落とした落ち着いた値（赤なら #C33A2A）を使う。
+      実測：題 #424242／本文 #333333（#2F2F2C〜#424242）／箇条書きの点 #FEAE00／
+            下線マーカー #FAE232／表紙の地 #E9EFEE
+      帯の色（斜線）：灰 #3E3E3E／青 #0076BA／赤 #EE220C／黄 #E0A100／緑 #187E18
+      帯は細い斜線なので鮮やかな色でも薄く見える。面や文字に使う --accent は、
+      手本の「鮮やかすぎる色を使わない」の直したあとの色（赤 #C33A2A）など、落ち着いた値にする。
    ============================================================================ */
 :root {
   --ink: #333333;
@@ -63,24 +62,24 @@
   --divider-bg: var(--accent);  /* 区切り（divider）の地 */
   --divider-ink: #ffffff;       /* 区切りの文字 */
 
-  /* 行長。ヘッダーの調整つまみが要らないぶん、16:9 で右が余らない 42em を既定にする */
+  /* 行長。ヘッダーの調整つまみが要らないぶん、よく直す 42em を既定にする */
   --measure: 42em;
 
-  /* 帯と余白（1280×720 のスライドでの値） */
+  /* 帯と余白（実測：帯 37〜41px／左の広い帯 21.5%／題の左端 100〜127px／題の上端 47〜57px） */
   --band-w: 40px;               /* 左の細い帯の幅、上の帯の高さ */
   --band-wide-w: 275px;         /* 左の広い帯の幅（1280 の 21.5%） */
   --band-gap: 64px;             /* 帯と本文の間 */
   --pad-t: 52px;                /* 題の上の余白 */
-  --hatch-tile: 8px;            /* 斜線の間隔（横に測った値）。整数にする */
+  --hatch-tile: 8px;            /* 斜線の間隔（横に測った値。実測 7.3〜8.2px）。整数にする */
   --hatch-core: 0.4px;          /* 斜線の芯の半分の太さ（ここまでは帯の色そのまま） */
-  --hatch-edge: 0.85px;         /* 斜線の縁（芯からここまでで地の色になる）。線の太さは約 1.2px */
+  --hatch-edge: 0.85px;         /* 斜線の縁（芯からここまでで地の色になる）。太さは約 1.2px（実測 1.15px） */
 
-  /* 書体。LINE Seed JP にするデックは style: に次の1行を書く：
+  /* 書体。手本と同じ LINE Seed JP にするデックは style: に次の1行を書く：
        :root { --font-jp: var(--font-seed); }                                   */
   --font-seed: "LINE Seed JP", "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Noto Sans JP", "Meiryo", sans-serif;
 }
 
-/* 色のプリセット。セクションごとに色を変える使い方（例：章ごとに青・赤・黄・緑）。 */
+/* 色のプリセット。セクションごとに色を変える使い方（手本：文字＝青、行間＝赤、レイアウト＝黄、配色＝緑）。 */
 /* 色覚の多様性に配慮した色にするときは、theme: tsutawaru-simple-cud に替える（色の語はそのまま使える）。 */
 section.blue   { --band: #0076BA; --accent: #0076BA; --accent-dark: #004D80; --accent-soft: #E8F2F8; }
 section.red    { --band: #EE220C; --accent: #C33A2A; --accent-dark: #962B1F; --accent-soft: #FBECEA; }
@@ -105,11 +104,11 @@ section .page-title { display: none !important; }
       帯は section の背景として描く（::before / ::after は使わない。::after はページ番号）。
       ・斜線は repeating-linear-gradient。線の間は transparent ではなく地の色（--bg）で塗る。
         transparent を使うと、PDF で帯が粗い画像になり、拡大すると階段状になる
-        （不透明な色だけなら PDF でもベクターのまま出る。このリポジトリの PDF 書き出しで確かめた）。
+        （不透明な色だけなら PDF でもベクターのまま出る。2026-09-29 実測）。
       ・斜線の間隔は「横に測って 8px ちょうど」になる値（8 ÷ √2）。
         半端な値にすると、線ごとに太さがばらつく。
       ・色の境目は 0.45px ぼかす（ぴったり重ねると、PNG で線が階段状になる）。
-      ・左の帯は「／」、上の帯は「＼」の向き。
+      ・左の帯は「／」、上の帯は「＼」の向き（実測）。
    ============================================================================ */
 :root {
   --hatch-pitch: calc(var(--hatch-tile) * 0.70710678);
@@ -136,7 +135,7 @@ section {
 /* 上の帯：横に広く使いたいスライド（左右の見比べ・広い表）に */
 section.band-top {
   --pad-l: var(--side-pad);
-  padding-top: calc(var(--header-h) + 28px);   /* 題の上端を academic と同じ位置（84px）に */
+  padding-top: calc(var(--header-h) + 28px);   /* 実測：題の上端 84px。tsutawaru-academic と同じ位置 */
   background-image: var(--hatch-t);
   background-size: 100% var(--band-w);
 }
@@ -169,7 +168,7 @@ section.handson-2:has(.takeaway) { background-image: none; }
 
 /* ============================================================================
    4. 本文の組版
-      行送り 1.75・字間 0.08em。題と本文の間は、題の1文字分ほどあける。
+      実測：行送り 1.65〜1.77／字間 0.08〜0.1em／題と本文の間は題の1文字分ほど
    ============================================================================ */
 section {
   line-height: 1.75;
@@ -182,7 +181,7 @@ section h1 {
   letter-spacing: 0.08em;
   margin: 0 0 .9em;
 }
-/* 小見出しは色と太さだけ。左の縦罫は付けない */
+/* 小見出しは色と太さだけ。左の縦罫は付けない（実測：「明朝体、セリフ」などの小見出し） */
 section h3, .sh {
   color: var(--accent-dark);
   border-left: none;
@@ -191,7 +190,7 @@ section h3, .sh {
 }
 .lead { color: var(--ink); letter-spacing: 0.08em; }
 
-/* 箇条書きの点：大きく、オレンジで、項目の間をあける */
+/* 箇条書きの点：大きく、オレンジで、項目の間をあける（手本「点を大きく＆間隔あける」） */
 section ul > li { margin: 0 0 .55em; }
 section ul > li::before {
   font-size: .6em;
@@ -207,7 +206,7 @@ section table th, section table td { letter-spacing: 0.04em; }
 
 /* ============================================================================
    5. 要点の帯（takeaway）— 塗りを外し、上の細い罫だけにする
-      位置・大きさ（下端から 28px・28px の太字）は academic のまま。
+      位置・大きさ（下端から 28px・28px の太字）は tsutawaru-academic のまま。
       左右は本文の幅に合わせる。
    ============================================================================ */
 .takeaway {
@@ -241,7 +240,8 @@ section.divider h2,
 section.divider .chapter-num { color: var(--divider-ink); opacity: .85; }
 section.divider::after { color: var(--divider-ink); opacity: .6; }
 
-/* ---- 大きな1文（message）：灰色の太字を中央に。強調する行だけ *…* で色を付ける ---- */
+/* ---- 大きな1文（message）：灰色の太字を中央に。強調する行だけ *…* で色を付ける ----
+   実測：「見やすくする／読みやすくする／目立つ（目を引く）」のスライド。 */
 section.message,
 section.qa {
   --pad-l: calc(var(--band-w) + var(--side-pad));   /* 帯を除いた白地の中央に置く */
@@ -265,7 +265,7 @@ section.message h2 { color: var(--ink-weak); letter-spacing: 0.08em; }
 section.qa h1 { font-size: 60px; letter-spacing: 0.12em; }
 
 /* ---- 要点だけを大きく（lay-points）：字間を広げ、かたまりごと中央に ---------------
-   字間 0.2em・項目の間 .7em・かたまりは左右の中央。
+   実測：字間 0.26em・行の間隔 82px・かたまりは左右の中央。
    margin-top の !important：header: を書かないデックでは箇条書きが section の最初の子になり、
    Marp 既定の「最初の子は margin-top:0 !important」で縦の中央寄せが消えるため。 */
 section.lay-points > :is(ul, ol),
@@ -281,8 +281,8 @@ section.lay-lead > p:not(:is(.note, .attr, .cite)):not(:has(> img)),
 section.lay-lead > .body > p:not(:is(.note, .attr, .cite)):not(:has(> img)) { margin-top: auto !important; }
 
 /* ---- 表紙 -------------------------------------------------------------------
-   cover-left＝左揃えの表紙（前置き → 大きな太い題 → 下に所属・氏名・日付）。
-   cover-hero＝academic の標準（中央の題＋丸い写真）。どちらも地は薄い灰色、帯なし。 */
+   cover-left＝手本の表紙の形（左揃え：前置き → 大きな太い題 → 下に所属・氏名・日付）。
+   cover-hero＝これまでの標準（中央の題＋丸い写真）。どちらも地は薄い灰色、帯なし。 */
 section.cover,
 section.cover-hero,
 section.cover-left {
@@ -311,7 +311,7 @@ section.cover-left .sub  { font-size: 26px; color: var(--ink-weak); }
 section.cover-left .meta {
   font-size: 24px; color: var(--ink); line-height: 1.9; letter-spacing: 0.1em;
 }
-/* 吹き出しのラベル（表紙の題の上に置く短い語）：<div class="bubble">sample</div> */
+/* 吹き出しのラベル（表紙の題の上に置く短い語）：<div class="bubble">15-min</div> */
 .bubble {
   position: relative; align-self: flex-start;
   background: #fff; color: #000;

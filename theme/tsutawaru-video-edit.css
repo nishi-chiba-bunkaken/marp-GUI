@@ -1,0 +1,32 @@
+/* @theme tsutawaru-video-edit */
+/* ============================================================================
+   tsutawaru-video-edit — 余白と罫（B 案。2026-10-17 追加）
+   土台は tsutawaru-video（型・大きさ・ワイプ枠はそちら）。ここでは色と飾りの形だけを決める。
+   上の短い太い罫と、下の細い罫だけ。カードは塗らず上の罫で区切る。
+   動画の番号は入れない（並べ替えて使うため）。
+   ============================================================================ */
+@import "tsutawaru-video";
+
+:root {
+  --accent: #C5441F;
+  --accent-dark: #8E2F14;
+  --accent-soft: #FBEDE7;
+  --bullet: #E37400;
+  --pip-ring: 0 0 0 6px var(--bg), 0 0 0 7px #C8C8C8;
+}
+
+section {
+  background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(#DADCE0, #DADCE0);
+  background-size: 120px 8px, 900px 1px;
+  background-position: 72px 0, 72px 668px;
+  background-repeat: no-repeat;
+}
+section > header::before { content: "■" !important; display: inline !important; margin-right: .5em; font-size: .8em; color: var(--accent); }
+section.title {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 1280px 12px; background-position: 0 0;
+}
+section.tool > ul > li,
+section.cases > ul > li { border-top: 3px solid var(--accent); padding-left: 2px; padding-right: 2px; }
+section.demo > ol > li::before { border-radius: 4px; }
+section.matome > ol > li::before { font-family: Georgia, "Times New Roman", serif; }

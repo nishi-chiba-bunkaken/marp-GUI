@@ -1,0 +1,324 @@
+/* @theme tsutawaru-video */
+/* ============================================================================
+   tsutawaru-video — オンデマンド動画用の土台（2026-10-17 追加）
+
+   tsutawaru-simple を @import し、斜線の帯を外して次を足す：
+     ・文字を大きく（本文 28px・題 40px）
+     ・右下に丸いワイプ枠（講師のカメラを OBS で重ねる位置。全スライドで同じ場所・同じ大きさ）
+     ・ページ番号は左下
+     ・動画シリーズの型（下の表）。どれも素の Markdown で書け、div はほとんど要らない
+
+   このテーマは直接使わず、見た目の違う2つの派生テーマから使う：
+     tsutawaru-video-soft  … 丸と角丸（A 案）
+     tsutawaru-video-edit  … 余白と罫（B 案）
+   2つは同じ原稿のまま theme: の1行を替えるだけで切り替わる。
+
+   ビルド：--theme-set theme/academic.css theme/tsutawaru-academic.css theme/tsutawaru-simple.css
+            theme/tsutawaru-video.css theme/tsutawaru-video-soft.css theme/tsutawaru-video-edit.css
+   （npm run png / npm run pdf は theme/*.css を全部渡すので指定不要）
+
+   型（<!-- _class: … -->）：
+     title    表紙。header: をこの1枚だけ _header でシリーズ名にする。# 題／## 副題／最後の段落＝講師名
+     tool     ツール名と、できることを3つ。# ツール名／1文／- **語** 説明 ×3（カードになる）
+     image    出来上がりのイメージ。## 題＋インラインSVG（viewBox 960x480 目安）
+     demo     手順のデモ。左＝上下をぶち抜く画面の枠（収録した画面を重ねる）、右＝## 題＋1. 2. 3. の手順
+     demo wide  画面を1枚いっぱいに。右 1/5 が半透明の説明欄（## 題＋1. 2. 3.）、その下に胸から上のアバター。
+              書き方は demo と同じ（<span class="scr">画面の録画</span>／## 題／1. 2. 3.）。_class: demo wide
+     cases    世の中の使い方。## 題＋- **見出し** 説明 <small>出典</small> ×3（カードになる）
+     check    結果の確認。## 題＋箇条2〜3行（左に虫めがね）
+     learn    さらに学ぶ。## 題＋### 見出し＋箇条 を2組（左右2列になる）
+     matome   まとめ。## 題＋1. 2. 3.（大きな番号）
+     refs     参考文献。## 題＋- 箇条（番号なし・ぶら下げ・20px）。研究を引いた動画の最後に1枚
+   どの型にも <div class="takeaway">…</div> を置ける（右端はワイプ枠の手前で止まる）。
+
+   ワイプ枠：
+     --pip-d     直径（既定 200px＝1280 幅の 15.6%）
+     --pip-r / --pip-b  右・下からの距離
+     --pip-photo 枠の中に出す写真。none にすると輪だけになる（OBS でカメラを重ねるとき）
+     --pip-fill  枠の中の塗り（既定は写真）。デック全体を水玉にするなら style: の :root に --pip-fill: var(--pip-dots);
+                 （動画だけ水玉にするなら video.yaml の parts.pip: dots。動画パネルの「ワイプ」で選べる）
+     _class に pip-none を足すと、その1枚だけ枠を消す。pip-dots でその1枚だけ水玉。
+     pip-bust で丸い枠をやめ、右下に胸から上のアバターを枠なしで立たせる（動画のアバターがそこに入る。
+     大きさは --bust-w × --bust-h、位置は --bust-r / --bust-b。デック全体なら style: で section に同じ指定）。
+     OBS の切り抜き用マスク画像は slides/20261018_GenAItraining/obs/ にある（位置はこの値と同じ）。
+   ============================================================================ */
+@import "tsutawaru-simple";
+
+:root {
+  --pip-d: 200px;
+  --pip-r: 32px;
+  --pip-b: 28px;
+  --pip-photo: url('../../assets/profile.jpg');
+  /* 水玉：地は --accent-soft、玉は --accent（透明を使わない：PDF で粗い画像になるのを避ける） */
+  --pip-dots: radial-gradient(circle, var(--accent) 0 22%, var(--accent-soft) 24%) center / 26px 26px, var(--accent-soft);
+  --pip-ring: 0 0 0 6px var(--bg), 0 0 0 8px var(--rule);
+  --pip-safe: calc(var(--pip-d) + var(--pip-r) + 24px);   /* 右下で本文を止める幅 */
+  --bust-w: 240px;              /* pip-bust：胸から上のアバターの箱（幅×高さ、右・下からの距離） */
+  --bust-h: 270px;
+  --bust-r: 24px;
+  --bust-b: 0px;
+  --sub-lane: calc(var(--takeaway-bottom) + 78px);        /* 焼き込み字幕の下端（下からの距離）。takeaway 1行の上。tools/marp-video が読むだけで、見た目は変えない */
+
+  --x-pad: 72px;                /* 左右の余白 */
+  --body-size: 28px;
+  --title-size: 40px;
+  --demo-w: 60%;                /* demo の画面の幅 */
+  --demo-bg: #E8EAED;           /* demo の画面の下敷き */
+}
+
+/* ---- 1. 外枠：帯を外し、余白と文字を大きく -------------------------------- */
+section {
+  --pad-l: var(--x-pad);
+  --pad-r: var(--x-pad);
+  font-size: var(--body-size);
+  padding-top: 104px;
+  background-image: none;
+  background-size: 1280px 720px;
+  background-position: 0 0;
+  letter-spacing: .06em;
+}
+section h2 { font-size: var(--title-size); line-height: 1.45; margin: 0 0 .7em; letter-spacing: .06em; }
+section h3 { font-size: 30px; }
+section p, section li { max-width: none; }
+
+/* 題の上の小さな札：header: に書いたツール名が出る（派生テーマが形を決める） */
+section > header {
+  display: block !important;
+  position: absolute; top: 38px; left: var(--x-pad);
+  width: fit-content; height: auto; min-height: 0; max-height: none;
+  margin: 0; padding: 0; background: none; border: none;
+  font-size: 20px; font-weight: 700; line-height: 1.6; letter-spacing: .12em;
+  color: var(--accent);
+}
+section > header::before, section > header::after { content: none; display: none; }
+
+/* ページ番号は左下（右下はワイプ枠） */
+section::after { right: auto; left: 36px; bottom: 22px; font-size: 18px; }
+
+/* ---- 2. ワイプ枠 ---------------------------------------------------------- */
+section::before {
+  content: "";
+  position: absolute; z-index: 20;
+  right: var(--pip-r); bottom: var(--pip-b);
+  width: var(--pip-d); height: var(--pip-d);
+  border-radius: 50%;
+  background: var(--pip-fill, var(--accent-soft) var(--pip-photo) center / cover no-repeat);
+  box-shadow: var(--pip-ring);
+}
+section.pip-none::before { content: none; }
+section.pip-dots::before { background: var(--pip-dots); }
+/* 枠なし・胸から上：箱だけ置く（見えない）。tools/marp-video は --pip-shape: bust を見て、この箱にアバターを立たせる */
+section.pip-bust {
+  --pip-shape: bust;
+  --pip-safe: calc(var(--bust-w) + var(--bust-r) + 24px);
+}
+section.pip-bust::before {
+  width: var(--bust-w); height: var(--bust-h); right: var(--bust-r); bottom: var(--bust-b);
+  border-radius: 0; background: none; box-shadow: none;
+}
+
+/* 要点の帯はワイプ枠の手前で止める */
+.takeaway { right: var(--pip-safe) !important; }
+
+/* ---- 3. title：表紙 -------------------------------------------------------- */
+section.title { padding-top: 170px; justify-content: flex-start !important; }
+section.title > header { top: 132px; font-size: 24px; letter-spacing: .14em; }
+section.title h1 {
+  font-size: 64px; line-height: 1.3; letter-spacing: .04em;
+  color: var(--title); margin: .35em 0 .35em;
+}
+section.title h2 { font-size: 30px; font-weight: 400; color: var(--ink-weak); margin: 0; }
+section.title > p:last-child {
+  position: absolute; left: var(--x-pad); bottom: 52px; margin: 0;
+  font-size: 22px; letter-spacing: .12em; color: var(--ink-weak);
+}
+
+/* ---- 4. tool：ツール名と、できること3つ ------------------------------------- */
+section.tool { padding-top: 112px; }
+section.tool h1 { font-size: 68px; line-height: 1.2; letter-spacing: .04em; color: var(--title); margin: 0 0 .3em; }
+section.tool h1 + p { font-size: 34px; margin: 0 0 1.2em; }
+section.tool > ul {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px;
+  margin: 0 120px 0 0; padding: 0;          /* 右下のワイプ枠に掛けない */
+}
+section.tool > ul > li { margin: 0; padding: 22px 26px; font-size: 24px; line-height: 1.55; color: var(--ink-weak); }
+section.tool > ul > li::before { content: none; }
+section.tool > ul > li > strong:first-child { display: block; font-size: 30px; color: var(--title); margin-bottom: .2em; }
+section.tool > ul > li > strong:first-child + br { display: none; }
+
+/* ---- 5. image：出来上がりのイメージ（SVG を大きく） ------------------------- */
+section.image > p:has(> svg), section.image > svg, section.image > div.svgfig {
+  margin: 0 var(--pip-safe) 0 0; flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+section.image svg { height: 470px; width: auto; max-width: 100%; }
+
+/* ---- 6. demo：左＝上下をぶち抜く画面、右＝手順 ------------------------------ */
+section.demo {
+  --pad-l: calc(var(--demo-w) + 36px);
+  --pad-r: 36px;
+  padding-top: 40px;
+  background-image: linear-gradient(var(--demo-bg), var(--demo-bg)) !important;
+  background-size: var(--demo-w) 100% !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+section.demo > header { display: none !important; }
+section.demo h2 { font-size: 30px; line-height: 1.5; margin: 0 0 .8em; }
+section.demo > ol { margin: 0; padding: 0; list-style: none; counter-reset: st; font-size: 24px; }
+section.demo > ol > li { counter-increment: st; position: relative; padding-left: 1.8em; margin: 0 0 .7em; line-height: 1.5; letter-spacing: .04em; }
+section.demo > ol > li::marker { content: none; }
+section.demo > ol > li::before {
+  content: counter(st); position: absolute; left: 0; top: .12em;
+  width: 1.3em; height: 1.3em; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: .8em; font-weight: 700; letter-spacing: 0; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+/* 画面の枠に置く文字（収録で隠れる）。demo の最初の段落に <span class="scr">…</span> */
+section.demo .scr {
+  position: absolute; left: 0; top: 0; width: var(--demo-w); height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: #9AA0A6; font-size: 24px; letter-spacing: .1em;
+}
+/* 貼る文：右の列の下に小さな囲み */
+section.demo .prompt, section .prompt {
+  font-size: 20px; line-height: 1.6; background: var(--accent-soft); border: none;
+  padding: .6em .8em; margin: .4em 0 0; border-radius: 8px; letter-spacing: .03em;
+}
+section.demo .prompt { margin-right: 0; max-width: calc(100% - 0px); }
+/* 画面の枠に画像・動画を入れるとき：<img class="screen-media" src="…"> */
+section.demo .screen-media {
+  position: absolute; left: 0; top: 0; width: var(--demo-w); height: 100%; object-fit: cover; z-index: 1;
+}
+/* 焼き込み字幕の置き場（tools/marp-video が読むだけで、見た目は変えない）。
+   demo では画面の録画の枠に掛けず、右の列の下・ワイプ枠の左（x = --pad-l 〜 右から --pip-safe）に置く。
+   右の列は本文がワイプ枠の上端近くまで詰まるので（2026-10-17 実測 19 枚、空きは多くが 43px）、
+   箱の下端をワイプ枠の下端にそろえ、字を一回り小さく・4 行まで使う。 */
+section.demo {
+  --sub-left: var(--pad-l);
+  --sub-lane: var(--pip-b);
+  --sub-scale: .8;
+  --sub-lines: 4;
+}
+
+/* demo wide：画面を1枚いっぱいに。右 --col-w が半透明の説明欄（## 題＋1. 2. 3.）、その下に胸から上のアバター（枠なし）。
+   画面の録画は .scr（1枚全部）に収まる。PNG では説明欄を白で描き、動画では tools/marp-video が録画を重ねるとき
+   その帯だけ録画を薄くする（--scr-veil-w の幅・--scr-veil-a の濃さ）ので、録画の上に半透明の欄が乗って見える。 */
+section.demo.wide {
+  --col-w: 20%;
+  --col-pad: 20px;
+  --pip-shape: bust;
+  --bust-w: calc(var(--col-w) - 16px);
+  --bust-h: 250px;
+  --bust-r: 8px;
+  --bust-b: 0px;
+  --pip-safe: calc(var(--col-w) + 24px);
+  --scr-inset: 0px;             /* 録画は枠いっぱい（余白・角丸なし） */
+  --scr-radius: 0px;
+  --scr-veil-w: var(--col-w);   /* 録画の右端のこの幅を、説明欄として薄くする */
+  --scr-veil-a: .86;            /* 欄の濃さ（1＝録画が見えない） */
+  --pad-l: 0px; --pad-r: 0px;
+  padding: 0 !important;
+  background-image:
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(#fff, #fff),
+    linear-gradient(var(--demo-bg), var(--demo-bg)) !important;
+  background-size: 1px 100%, var(--col-w) 100%, 100% 100% !important;
+  background-position: calc(100% - var(--col-w)) 0, 100% 0, 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+section.demo.wide::before {
+  width: var(--bust-w); height: var(--bust-h); right: var(--bust-r); bottom: var(--bust-b);
+  border-radius: 0; background: none; box-shadow: none;
+}
+section.demo.wide .scr, section.demo.wide .screen-media { left: 0; top: 0; width: 100%; height: 100%; z-index: 0; }
+section.demo.wide .scr { background: none; flex-direction: column; gap: .4em; padding-right: var(--col-w); box-sizing: border-box; }
+section.demo.wide .scr small { font-size: 14px; letter-spacing: .05em; font-family: ui-monospace, Menlo, monospace; color: #B0B5BB; }
+/* 説明欄の中身：右の列。上からアバターの頭の上まで */
+section.demo.wide h2, section.demo.wide > ol, section.demo.wide .prompt {
+  position: relative; z-index: 2;
+  margin-left: calc(100% - var(--col-w) + var(--col-pad)); margin-right: var(--col-pad);
+}
+section.demo.wide h2 { font-size: 24px; line-height: 1.4; margin-top: 28px; margin-bottom: .6em; }
+section.demo.wide > ol { display: block; font-size: 19px; }
+section.demo.wide > ol > li { margin-bottom: .55em; padding-left: 1.6em; line-height: 1.45; }
+section.demo.wide .prompt { font-size: 16px; margin-top: .4em; }
+/* 字幕：録画の下端・説明欄の左。1 行 */
+section.demo.wide { --sub-left: 32px; --sub-lane: 24px; --sub-scale: .8; --sub-lines: 1; }
+
+/* ---- 7. cases：世の中の使い方（3枚のカード） -------------------------------- */
+section.cases > ul {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;
+  margin: 0 120px 0 0; padding: 0; align-items: stretch;
+  max-height: 330px;   /* 下端をワイプ枠の上端より上に保つ */
+}
+section.cases > ul > li { margin: 0; padding: 22px 24px; font-size: 23px; line-height: 1.6; display: flex; flex-direction: column; }
+section.cases > ul > li::before { content: none; }
+section.cases > ul > li > strong:first-child { display: block; font-size: 27px; line-height: 1.45; color: var(--title); margin-bottom: .35em; }
+section.cases > ul > li > strong:first-child + br { display: none; }
+section.cases > ul > li small { display: block; margin-top: auto; padding-top: .6em; font-size: 18px; color: var(--ink-weak); letter-spacing: .02em; line-height: 1.5; }
+section.cases > ul > li small a { color: inherit; }
+
+/* ---- 8. check：結果の確認（左に虫めがね） ----------------------------------- */
+section.check {
+  --pad-l: 300px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'><circle cx='150' cy='330' r='70' fill='none' stroke='%23F9AB00' stroke-width='18'/><line x1='200' y1='380' x2='250' y2='430' stroke='%23F9AB00' stroke-width='24' stroke-linecap='round'/><path d='M118 330 l22 22 l40 -44' fill='none' stroke='%23F9AB00' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/></svg>") !important;
+}
+section.check { background-size: 1280px 720px !important; background-position: 0 0 !important; background-repeat: no-repeat !important; }
+section.check > ul { font-size: 31px; margin-right: var(--pip-safe); }
+section.check > ul > li { margin-bottom: .6em; }
+
+/* ---- 9. learn：さらに学ぶ（### と箇条を左右2列） ---------------------------- */
+section.learn {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr; grid-template-rows: auto auto 1fr;
+  column-gap: 48px; align-content: start;
+}
+section.learn > h2 { grid-column: 1 / -1; grid-row: 1; }
+section.learn > h3 { grid-row: 2; margin: 0 0 .5em; font-size: 26px; color: var(--accent-dark); }
+section.learn > ul { grid-row: 3; margin: 0; font-size: 23px; line-height: 1.6; }
+section.learn > h3:nth-of-type(1), section.learn > ul:nth-of-type(1) { grid-column: 1; }
+section.learn > h3:nth-of-type(2), section.learn > ul:nth-of-type(2) { grid-column: 2; margin-right: calc(var(--pip-safe) - var(--x-pad)); }
+section.learn > ul > li { margin-bottom: .55em; }
+section.learn > ul > li small { display: block; font-size: 18px; color: var(--ink-weak); letter-spacing: .02em; }
+section.learn > header, section.learn::after, section.learn::before, section.learn > .takeaway { grid-column: auto; }
+
+/* ---- 10. matome：まとめ（大きな番号） --------------------------------------- */
+section.matome > ol { margin: 0 var(--pip-safe) 0 0; padding: 0; list-style: none; counter-reset: mt; font-size: 32px; }
+section.matome > ol > li { counter-increment: mt; position: relative; padding-left: 2.1em; margin: 0 0 .75em; line-height: 1.5; font-weight: 700; color: var(--title); }
+section.matome > ol > li::marker { content: none; }
+section.matome > ol > li::before {
+  content: counter(mt); position: absolute; left: 0; top: -.05em;
+  font-size: 1.5em; line-height: 1; font-weight: 700; color: var(--accent);
+}
+section.matome > ol > li > span, section.matome > ol > li small { display: block; font-size: 24px; font-weight: 400; color: var(--ink-weak); }
+
+/* ---- 11. 表：大きめ ----------------------------------------------------------- */
+section table { font-size: 23px; width: calc(100% - var(--pip-safe) + var(--x-pad)); margin: 8px 0 12px; }   /* 右下のワイプ枠に掛けない */
+section table th, section table td { padding: .45em .8em; }
+
+/* ---- 12. 例文の色分け：<span class="seg1">…</span>〜seg4（プロンプトの要素を示す） ---- */
+.seg1, .seg2, .seg3, .seg4 { padding: .08em .25em; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.seg1 { background: #E8F0FE; } .seg2 { background: #FEEFC3; } .seg3 { background: #E6F4EA; } .seg4 { background: #FCE8E6; }
+.seg1 b, .seg2 b, .seg3 b, .seg4 b { font-size: 18px; color: var(--ink-weak); margin-left: .3em; font-weight: 700; }
+
+/* ---- 13. nums：大きな数字を2〜3つ並べる。- **数字** 説明 <small>出典</small> ---- */
+section.nums > ul {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 40px;
+  margin: .4em var(--pip-safe) 0 0; padding: 0;
+}
+section.nums > ul > li { margin: 0; padding: 0; font-size: 25px; line-height: 1.6; }
+section.nums > ul > li::before { content: none; }
+section.nums > ul > li > strong:first-child { display: block; font-size: 64px; line-height: 1.2; color: var(--accent); letter-spacing: .02em; margin-bottom: .15em; }
+section.nums > ul > li > strong:first-child + br { display: none; }
+section.nums > ul > li small { display: block; font-size: 18px; color: var(--ink-weak); margin-top: .4em; }
+
+/* 出典の行（右下のワイプ枠に掛からない幅で） */
+section .attr { font-size: 18px; color: var(--ink-weak); margin-right: var(--pip-safe); }
+
+/* ---- 14. refs：参考文献。## 題＋- 箇条。ぶら下げ・20px・右はワイプ枠の手前で止める（2026-10-18 追加） ---- */
+section.refs > ul { list-style: none; margin: 0 var(--pip-safe) 0 0; padding: 0; font-size: 20px; line-height: 1.55; }
+section.refs > ul > li { padding-left: 1.4em; text-indent: -1.4em; margin: 0 0 .45em; color: var(--ink); }
+section.refs > ul > li::before { content: none; }
+section.refs > ul a { color: inherit; }
+section table td:first-child, section table th:first-child { white-space: nowrap; }

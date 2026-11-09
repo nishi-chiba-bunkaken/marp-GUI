@@ -1,0 +1,42 @@
+/* @theme tsutawaru-video-soft */
+/* ============================================================================
+   tsutawaru-video-soft — 丸と角丸（A 案。2026-10-17 追加）
+   土台は tsutawaru-video（型・大きさ・ワイプ枠はそちら）。ここでは色と飾りの形だけを決める。
+   参考：Google の Material 3 Expressive（2025-05）の「形と色で見せる」考え方を、
+         右上の淡い丸と角丸のカードだけに絞って取り入れた。Google for Education の見本には寄せない。
+   色を替えるデックは style: の :root で --accent / --accent-dark / --accent-soft / --deco-2 を上書きする。
+   ============================================================================ */
+@import "tsutawaru-video";
+
+:root {
+  --accent: #1A73E8;
+  --accent-dark: #174EA6;
+  --accent-soft: #E8F0FE;
+  --deco-2: #FEEFC3;            /* 2つ目の丸（黄） */
+  --deco-3: #CEEAD6;            /* 3つ目の丸（緑） */
+  --bullet: #F9AB00;
+  --pip-ring: 0 0 0 7px var(--bg), 0 0 0 13px var(--accent-soft);
+}
+
+section {
+  background-image:
+    radial-gradient(circle at 1270px -40px, var(--accent-soft) 0 210px, transparent 211px),
+    radial-gradient(circle at 1112px 84px, var(--deco-2) 0 40px, transparent 41px);
+}
+section > header {
+  background: var(--accent-soft); color: var(--accent-dark);
+  padding: 4px 20px; border-radius: 999px; top: 34px;
+}
+section.title {
+  background-image:
+    radial-gradient(circle at 1170px 110px, var(--accent-soft) 0 300px, transparent 301px),
+    radial-gradient(circle at 880px 660px, var(--deco-2) 0 92px, transparent 93px),
+    radial-gradient(circle at 1000px 300px, var(--deco-3) 0 40px, transparent 41px);
+}
+section.title > header { background: none; padding: 0; color: var(--accent); }
+
+section.tool > ul > li,
+section.cases > ul > li { background: var(--accent-soft); border-radius: 28px; }
+section.learn > ul > li { list-style: none; }
+section.demo { background-image: linear-gradient(var(--demo-bg), var(--demo-bg)) !important; }
+section .prompt { border-radius: 16px; }
