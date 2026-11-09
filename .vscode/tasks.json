@@ -65,6 +65,16 @@
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared", "clear": true },
       "problemMatcher": []
+    },
+    {
+      // ── Node.js 本体と npm パッケージの脆弱性点検・自動修正 ──
+      "label": "Marp: セキュリティ点検・自動更新（Node.js / npm）",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/tools/security-update.mjs"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
     }
   ],
   "inputs": [

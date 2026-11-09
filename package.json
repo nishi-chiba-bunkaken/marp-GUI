@@ -15,6 +15,8 @@
   "scripts": {
     "setup": "node tools/setup.mjs",
     "setup:check": "node tools/setup.mjs --check",
+    "security": "node tools/security-update.mjs",
+    "security:check": "node tools/security-update.mjs --check",
     "pdf": "node tools/marp-pdf/build-pdf.mjs",
     "pdf:safe": "node tools/marp-pdf/build-pdf.mjs --chunk 12",
     "present": "node tools/marp-present/present.mjs",

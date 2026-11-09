@@ -24,5 +24,14 @@
         ]
       }
     ]
+  },
+  "node-security-update": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\" node ../tools/security-update.mjs --hook",
+        "timeout": 30
+      }
+    ]
   }
 }
