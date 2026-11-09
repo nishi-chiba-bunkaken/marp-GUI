@@ -151,9 +151,11 @@ slides/
 ```markdown
 ---
 marp: true
-theme: academic
+theme: tsutawaru-simple
 paginate: true
-header: '<div class="hdr-left">発表タイトル</div><img class="hdr-logo" src="../assets/logo-placeholder.png" alt="ロゴ">'
+size: 16:9
+lang: ja
+footer: ''
 ---
 
 <!-- _class: lay-cards3 -->
@@ -225,8 +227,11 @@ npm test
 ## 中身
 
 ```
-theme/            テーマ 4 つ：academic.css（推奨・配置クラスと部品を含む）・
-                  tsutawaru-simple.css・tsutawaru-simple-cud.css（色覚の多様性に配慮した配色）・ponchie.css（1 枚の全体像）
+theme/            テーマ 8 つ：tsutawaru-simple.css（推奨・ヘッダー帯のない白地＋斜線の帯）・
+                  tsutawaru-simple-cud.css（色覚の多様性に配慮した配色）・
+                  tsutawaru-academic.css（ヘッダー帯＋伝わるデザイン準拠）・
+                  tsutawaru-video.css / tsutawaru-video-soft.css / tsutawaru-video-edit.css（動画・オンデマンド講義用）・
+                  academic.css（配置クラスと部品の基底）・ponchie.css（1 枚の全体像）
 slides/           見本デック 14 本：sample-getting-started（使い方・英語）、sample-hydrogen・-academic・
                   -ponchie・-tsutawaru-simple・-tsutawaru-simple-cud の英語版と日本語版（-ja）、
                   sample-layouts（配置クラス）・sample-parts（部品）・sample-lecture（試験用）。共有画像は assets/

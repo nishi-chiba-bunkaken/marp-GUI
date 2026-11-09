@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ../tools/git-attrib/hook.mjs pre",
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\" node ../tools/git-attrib/hook.mjs pre",
             "timeout": 20
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ../tools/git-attrib/hook.mjs post",
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\" node ../tools/git-attrib/hook.mjs post",
             "timeout": 20
           }
         ]

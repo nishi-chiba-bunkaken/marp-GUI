@@ -157,9 +157,10 @@ slides/
 ```markdown
 ---
 marp: true
-theme: academic
+theme: tsutawaru-simple
 paginate: true
-header: '<div class="hdr-left">Talk title</div><img class="hdr-logo" src="../assets/logo-placeholder.png" alt="Logo">'
+size: 16:9
+footer: ''
 ---
 
 <!-- _class: lay-cards3 -->
@@ -231,8 +232,10 @@ npm test
 ## Contents
 
 ```
-theme/            four themes: academic.css (recommended, with layout classes and parts),
-                  tsutawaru-simple.css, tsutawaru-simple-cud.css (colour-universal palette), ponchie.css (one-page overview)
+theme/            eight themes: tsutawaru-simple.css (recommended, hatched band without header bar),
+                  tsutawaru-simple-cud.css (colour-universal palette), tsutawaru-academic.css,
+                  tsutawaru-video.css / tsutawaru-video-soft.css / tsutawaru-video-edit.css (on-demand video),
+                  academic.css (base with layout classes and parts), ponchie.css (one-page overview)
 slides/           14 sample decks: sample-getting-started (the workflow, English); sample-hydrogen,
                   -academic, -ponchie, -tsutawaru-simple and -tsutawaru-simple-cud in English and
                   Japanese (-ja); sample-layouts (layout classes), sample-parts (parts),
