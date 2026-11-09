@@ -1,10 +1,15 @@
 {
   "markdown.marp.themes": [
-    "./theme/academic.css",
     "./theme/tsutawaru-simple.css",
     "./theme/tsutawaru-simple-cud.css",
+    "./theme/tsutawaru-academic.css",
+    "./theme/tsutawaru-video.css",
+    "./theme/tsutawaru-video-soft.css",
+    "./theme/tsutawaru-video-edit.css",
+    "./theme/academic.css",
     "./theme/ponchie.css"
   ],
+  "markdown.marp.defaultTheme": "tsutawaru-simple",
   "markdown.marp.html": "all",
   "files.associations": { "*.md": "markdown" },
   "npm.autoDetect": "on",
